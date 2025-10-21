@@ -76,74 +76,108 @@ Ahora, la lógica de negocio (`ServicioDeClientes`) ya no sabe si está usando M
 
 Antes de escribir el código de negocio, necesitamos una "casa" donde vivirán nuestras clases. Esto implica instalar herramientas y organizar el proyecto de una forma que refleje las capas de la Arquitectura Hexagonal.
 
-### 2.1. Instalación y Herramientas Necesarias 🛠️
+### 2.1. Instalación y Herramientas Necesarias 🛠️ (La Caja de Herramientas)
 
-Si no tienes experiencia previa con Java, necesitarás lo siguiente:
+Si no tienes experiencia previa con Java, sigue estos tres pasos obligatorios:
 
-1.  **Java Development Kit (JDK):** Es el corazón. Contiene el compilador, las librerías necesarias y el entorno de ejecución (JVM). Necesitas instalar una versión reciente, como **JDK 17** (la versión LTS o *Long Term Support*).
-2.  **Entorno de Desarrollo Integrado (IDE):** Es la herramienta donde escribirás el código. El más común en el mundo Java y altamente recomendado es **IntelliJ IDEA Community Edition** (gratuito). Otras opciones populares son Eclipse o VS Code.
-3.  **Herramienta de Construcción (Build Tool):** Para Java, no solo escribimos archivos `.java`, sino que necesitamos una herramienta que gestione:
-      * La compilación del código.
-      * La descarga de librerías externas (dependencias).
-      * La creación del paquete final (el archivo `.jar` ejecutable).
-        El estándar de facto para proyectos profesionales es **Maven** o **Gradle**. Usaremos **Maven** por su simplicidad inicial.
+#### 2.1.1. Java Development Kit (JDK) - El Corazón ❤️
+
+1.  **Descarga e Instalación:** Instala el **JDK 17 (LTS)** o una versión superior.
+2.  **Verificación Crucial:** Abre tu **Terminal** y escribe `java -version`. Asegúrate de que la versión instalada sea visible.
+
+#### 2.1.2. Entorno de Desarrollo Integrado (IDE) - El Taller ✍️
+
+1.  **Descarga e Instalación:** Instala **IntelliJ IDEA Community Edition** (gratuito).
+
+#### 2.1.3. Herramienta de Construcción (Build Tool) - El Constructor 🏗️
+
+  * **Usaremos Maven:** No necesitas instalar Maven por separado. IntelliJ IDEA lo gestionará por ti.
+
+-----
 
 ### 2.2. Creación del Proyecto Básico con Maven
 
-Para crear un proyecto Java que respete las capas de la Arquitectura Hexagonal, la mejor práctica es usar **Módulos de Maven** (o subproyectos). Esto nos permite hacer cumplir las reglas de dependencia de la arquitectura a nivel de compilación:
+Para crear un proyecto Java que respete las capas de la Arquitectura Hexagonal, la mejor práctica es usar **Módulos de Maven** (o subproyectos).
+
+#### 2.2.1. Crear el Proyecto Padre (Contenedor Principal)
+
+1.  **Iniciar Nuevo Proyecto:** Abre IntelliJ IDEA y selecciona **"New Project"**.
+2.  **Seleccionar el Generador Correcto:**
+      * En el panel lateral izquierdo (**New Project**), selecciona la opción **"Java"** (la opción genérica, no "Maven Archetype").
+      * Esto nos permite configurar el sistema de construcción (Build system) de forma simple, evitando plantillas complejas.
+3.  **Configurar el Proyecto Base:**
+      * **Name:** Escribe **`proyecto-hexagonal`**.
+      * **Build system:** Haz clic y selecciona **`Maven`** (esto es crucial).
+      * **JDK:** Verifica que esté seleccionado tu JDK (ej. `22 Oracle OpenJDK 22.0.1`).
+      * **Add sample code:** **Desmarca esta casilla** para empezar con un proyecto limpio.
+4.  Haz clic en **"Create"** (Crear).
 
 | Módulo/Capa | Contenido (Dominio) | Dependencias Permitidas |
 | :--- | :--- | :--- |
-| **`app-core`** | Lógica de **Dominio** (el negocio puro), **Puertos (Interfaces)**. | **NINGUNA** (no puede ver ni Base de Datos ni Web). |
-| **`app-infra`** | **Adaptadores** (Implementaciones de BD, Web, Archivos). | Depende de `app-core` (implementa sus Interfaces). |
-| **`app-main`** | El punto de arranque de la aplicación (el **Ensamblador**). | Depende de `app-core` y `app-infra`. |
+| **app-core** | Lógica de Dominio, **Puertos (Interfaces)**. | NINGUNA (no puede ver ni Base de Datos ni Web). |
+| **app-infra** | **Adaptadores** (Implementaciones de BD, Web, Archivos). | Depende de **app-core** (implementa sus Interfaces). |
+| **app-main** | El punto de arranque de la aplicación (el Ensamblador). | Depende de **app-core** y **app-infra**. |
 
-**Estructura del Directorio del Proyecto:**
+#### 2.2.2. Creación de los Módulos de Capa (Las "Cajas")
+
+Ahora, dentro del proyecto **`proyecto-hexagonal`**, crea las tres carpetas/módulos.
+
+1.  **Clic Derecho** sobre la carpeta `proyecto-hexagonal` en el panel de proyectos de IntelliJ.
+2.  Ve a **New** $\rightarrow$ **Module** (Módulo).
+3.  Asegúrate de que **Maven** esté seleccionado como el tipo de módulo.
+4.  **Repite 3 veces** los siguientes pasos, creando los módulos:
+      * **Nombre del primer módulo:** `app-core`
+      * **Nombre del segundo módulo:** `app-infra`
+      * **Nombre del tercer módulo:** `app-main`
+
+**Estructura del Directorio del Proyecto Final:**
 
 ```
 proyecto-hexagonal/
 ├── pom.xml (Maven Principal)
-├── app-core/
-│   ├── src/main/java/com/miempresa/core/...
+├── app-core/         <-- El Dominio (el Corazón)
+│   ├── src/main/java/...
 │   └── pom.xml (Maven del Core)
-├── app-infra/
-│   ├── src/main/java/com/miempresa/infra/...
+├── app-infra/        <-- La Tecnología (Adaptadores)
+│   ├── src/main/java/...
 │   └── pom.xml (Maven de la Infraestructura)
-├── app-main/
+├── app-main/         <-- El Ensamble (El Arranque)
 │   ├── src/main/java/com/miempresa/main/Application.java
 │   └── pom.xml (Maven del Main)
 ```
 
-**📌 Explicación Detallada de la Estructura (El Por Qué):**
-
-  * **Aislamiento del Core:** La carpeta `app-core` es la más sagrada. Por definición, **sólo contendrá lógica de negocio**. El `pom.xml` de `app-core` *no* listará librerías de bases de datos (como JDBC) o frameworks web (como Spring Web), forzando a que la lógica de negocio permanezca **agnóstica a la tecnología**.
-  * **Encapsulamiento de Infraestructura:** La carpeta `app-infra` contendrá todo lo "externo" al negocio: el código que habla con la base de datos, el código que procesa las peticiones web, etc. Su `pom.xml` sí listará librerías externas.
-  * **Rol del Main:** La carpeta `app-main` es donde se juntan todas las piezas (Adaptadores y Core) y se arranca la aplicación. Es el único lugar que conoce la existencia de la tecnología (Adaptadores) *y* el negocio (Core).
+-----
 
 ### 2.3. Estructura de Paquetes dentro del Core (Muy Importante)
 
-Dentro del módulo `app-core` (el Dominio), es crucial dividir las responsabilidades usando paquetes de Java para reflejar las partes de la Arquitectura Hexagonal:
+Dentro del módulo **`app-core`** (el Dominio), es crucial dividir las responsabilidades usando paquetes (subcarpetas de Java) para reflejar las partes internas de la Arquitectura Hexagonal.
+
+#### 2.3.1. Creación de Paquetes Lógicos
+
+1.  Expande la estructura de carpetas: `app-core/src/main/java/`.
+2.  Crea un **paquete raíz** para tu dominio (ej: `com.miempresa.core`).
+3.  Dentro de ese paquete raíz, crea los siguientes paquetes:
+
+| Paquete | Rol en el Dominio | Contenido |
+| :--- | :--- | :--- |
+| **domain/** | Entidades y Objetos de Valor | Las reglas de negocio primarias. |
+| **service/** | Casos de Uso (Use Cases) | La lógica de flujo de negocio (qué se puede hacer). |
+| **port/** | Puertos (Contratos de Comunicación) | Las interfaces que definen los límites. |
+
+4.  Crea los sub-paquetes dentro de **`port`**:
+      * **port/in/**: **Puertos Primarios (Input)** - Interfaces que el mundo exterior usa para hablar con el Core.
+      * **port/out/**: **Puertos Secundarios (Output)** - Interfaces que el Core necesita que la Infraestructura implemente (ej. para bases de datos).
+
+**Estructura de Paquetes Final:**
 
 ```
 app-core/src/main/java/com/miempresa/core/
-├── domain/            <-- Clases de negocio (Ej: Cuenta, Producto)
-├── service/           <-- Casos de Uso (Lógica de negocio: transferirDinero, crearProducto)
-└── port/              <-- Interfaces (Contratos de comunicación)
-    ├── in/            <-- Puertos Primarios (Input/Driving)
-    └── out/           <-- Puertos Secundarios (Output/Driven)
+├── domain/
+├── service/
+└── port/
+    ├── in/
+    └── out/
 ```
-
-**📌 Resumen de responsabilidades del `app-core`:**
-
-  * **`domain`:** Contiene las **Entidades** que representan la información de la empresa.
-  * **`service`:** Contiene los **Casos de Uso** (*Use Cases*), que son la lógica de negocio pura (qué se puede hacer).
-  * **`port`:** Contiene las **Interfaces** que definen los límites del Dominio. Esto es la parte clave de Hexagonal.
-
------
-
-Con esta estructura definida, ya tenemos la casa lista para empezar a construir el Dominio. El **Paso 3** será entender la teoría de la Arquitectura Hexagonal y cómo estos paquetes (Domain, Service, Port) encajan en el Hexágono.
-
-¿Continuamos con el **Paso 3**?
 
 <a id="arriba3" href="#arriba2">atrás</a> - Curso de Java de Babull - <a href="#arriba4">siguiente</a>  
 
