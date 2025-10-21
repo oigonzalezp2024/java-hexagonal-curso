@@ -243,12 +243,6 @@ Esto se logra porque el Core define **TODOS** los contratos (Interfaces/Puertos)
 
 El resultado: El Core permanece completamente aislado y la tecnología es intercambiable, porque la única cosa que importa es el contrato (la Interfaz).
 
-***
-
-Con esta teoría clara, ya podemos empezar a programar la capa más interna y protegida: el Dominio. El **Paso 4** se centrará en definir la lógica de negocio pura, sin pensar en bases de datos ni peticiones web.
-
-¿Listo para el **Paso 4**?
-
 <a id="arriba4" href="#arriba3">atrás</a> - Curso de Java de Babull - <a href="#arriba5">siguiente</a>  
 
 ## 4\. Definición del Dominio (Core): Entidades y Casos de Uso
